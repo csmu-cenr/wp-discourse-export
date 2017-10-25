@@ -28,7 +28,7 @@ class Exporter {
 			// Only run this once. Will probably need to be run as a background task, and rate limited.
 			$wpde_options = get_option( 'wpde_options' );
 			$wpde_options['wpde_export_users'] = 0;
-			write_log('wpde_options', $wpde_options );
+
 			update_option( 'wpde_options', $wpde_options );
 		}
 	}
@@ -67,6 +67,7 @@ class Exporter {
 		}
 
 		$user_data = json_decode( wp_remote_retrieve_body( $response ), true );
-		write_log( 'Discourse user data', $user_data );
+
+		// Do something.
 	}
 }
