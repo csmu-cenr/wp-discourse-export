@@ -67,6 +67,16 @@ class Admin {
 			'export_users_checkbox',
 		), 'wpde_options', 'wpde_settings_section' );
 
+		add_settings_field( 'wpds_export_posts', __( 'Export Posts', 'wpde' ), array(
+			$this,
+			'export_posts_checkbox',
+		), 'wpde_options', 'wpde_settings_section' );
+
+		add_settings_field( 'wpds_export_comments', __( 'Export Comments', 'wpde' ), array(
+		        $this,
+            'export_comments_checkbox',
+        ), 'wpde_options', 'wpde_settings_section' );
+
 		register_setting( 'wpde_options', 'wpde_options', array( $this->form_helper, 'validate_options' ) );
 
 	}
@@ -111,4 +121,11 @@ class Admin {
 		$this->form_helper->checkbox_input( 'wpde_export_users', 'wpde_options', __( 'Export users.', 'wpde' ) );
 	}
 
+	public function export_posts_checkbox() {
+		$this->form_helper->checkbox_input( 'wpde_export_posts', 'wpde_options', __( 'Export posts.', 'wpde' ) );
+	}
+
+	public function export_comments_checkbox() {
+	    $this->form_helper->checkbox_input( 'wpde_export_comments', 'wpde_options', __( 'Export comments', 'wpde' ) );
+    }
 }

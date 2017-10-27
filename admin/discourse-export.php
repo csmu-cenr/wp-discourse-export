@@ -10,6 +10,8 @@ class DiscourseExport {
 
 	protected $wpde_options = array(
 		'wpde_export_users' => 0,
+		'wpde_export_posts' => 0,
+		'wpde_export_comments' => 0,
 	);
 
 	public function __construct() {
