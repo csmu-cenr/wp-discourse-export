@@ -71,7 +71,7 @@ class Exporter {
 				$post_url = $base_url . "/posts";
 				$comment_post_ids = [];
 				foreach ( $comments as $comment ) {
-				write_log( 'comment', $comment );
+				//write_log( 'comment', $comment );
 					$raw = $comment->comment_content;
 					$author_email = $comment->comment_author_email;
 					$author = get_user_by( 'email', $author_email);
@@ -81,12 +81,29 @@ class Exporter {
 					$reply_to_post_number = ! empty( $comment_post_ids[ $comment_parent ] ) ? $comment_post_ids[ $comment_parent ] : null;
 					//write_log('reply to post number', $reply_to_post_number);
 					$username = ! empty( $author->user_login ) ? $author->user_login : 'system';
+					$user_id = $this->get_discourse_user( $author );
 
-					// If you generate an api key for the user, can you publish under the correct username and leave out
-					// the change-owner call?
+
+					$api_key_url = $base_url . "/admin/users/{$user_id}/generate_api_key";
 					$data = array(
 						'api_key' => $api_key,
 						'api_username' => $api_username,
+					);
+					$post_options = array(
+						'timeout' => 30,
+						'method' => 'POST',
+						'body' => http_build_query( $data ),
+					);
+
+					$result = wp_remote_post( $api_key_url, $post_options );
+					$response_body = json_decode( wp_remote_retrieve_body( $result ) );
+					// This needs to be saved. Maybe not to the database, but at least for the duration of the foreach loop.
+					// If the user can't be found, publish as system?
+					$user_api_key = $response_body->api_key->key;
+
+					$data = array(
+						'api_key' => $user_api_key,
+						'api_username' => $username,
 						'topic_id' => $topic_id,
 						'raw' => $raw,
 						'reply_to_post_number' => $reply_to_post_number,
@@ -100,46 +117,12 @@ class Exporter {
 					$result = wp_remote_post( $post_url, $post_options );
 					$response_body = json_decode( wp_remote_retrieve_body( $result ) );
 				//	write_log( 'discourse post response', $response_body );
-					$discourse_post_id = $response_body->id;
-					$post_number = $response_body->post_number;
+					if ( DiscourseUtilities::validate( $result ) ) {
+						//$discourse_post_id = $response_body->id;
+						$post_number = $response_body->post_number;
 
-					$comment_post_ids[ $comment_id ] = $post_number;
-
-					/*
-					$update_post_url = $base_url . "/posts/{$dc_id}";
-					write_log('update url', $update_post_url );
-					$data = array(
-						'api_key' => $api_key,
-						'api_username' => $api_username,
-						'post[raw]' => 'Changing the raw content',
-					);
-					$post_options = array(
-						'timeout' => 30,
-						'method' => 'PUT',
-						'body' => http_build_query( $data ),
-					);
-					$result = wp_remote_post( $update_post_url, $post_options );
-					$response_body = json_decode( wp_remote_retrieve_body( $result ) );
-					write_log('update post response', $response_body );
-                    */
-
-					$change_owner_url = $base_url . "/t/{$topic_id}/change-owner";
-					$data = array(
-						'api_key' => $api_key,
-						'api_username' => $api_username,
-						'post_ids[]' => $discourse_post_id,
-						'username' => $username,
-					);
-					$post_options = array(
-						'timeout' => 30,
-						'method' => 'POST',
-						'body' => http_build_query( $data ),
-					);
-
-					$result = wp_remote_post( $change_owner_url, $post_options );
-					$response_body = json_decode( wp_remote_retrieve_body( $result ) );
-				//	write_log( 'change owner response', $response_body );
-
+						$comment_post_ids[ $comment_id ] = $post_number;
+					}
 				}
 			}
 
@@ -185,8 +168,45 @@ class Exporter {
 		}
 
 		$user_data = json_decode( wp_remote_retrieve_body( $response ), true );
+		write_log( 'user data', $user_data );
 
 		// Do something.
+	}
+
+	protected function get_discourse_user( $user ) {
+		$base_url     = $this->options['url'];
+		$api_key      = $this->options['api-key'];
+		$api_username = $this->options['publish-username'];
+		if ( ! $base_url || ! $api_key || ! $api_username ) {
+			return new \WP_Error( 'discourse_configuration_error', 'The WP Discourse plugin has not been properly configured.' );
+		}
+		// Try to get the user by external_id.
+		$external_user_url = esc_url_raw( $base_url . "/users/by-external/$user->ID.json" );
+		$external_user_url = add_query_arg( array(
+			'api_key'      => $api_key,
+			'api_username' => $api_username,
+		), $external_user_url );
+		$response          = wp_remote_get( $external_user_url );
+		if ( DiscourseUtilities::validate( $response ) ) {
+			$user_data = json_decode( wp_remote_retrieve_body( $response ), true );
+			return $user_data['user']['id'];
+		}
+		// Try to get the user by email from active.json.
+		$users_url = esc_url_raw( $base_url . '/admin/users/list/active.json' );
+		$users_url = add_query_arg( array(
+			'filter'       => rawurlencode( $user->user_email ),
+			'api_key'      => $api_key,
+			'api_username' => $api_username,
+		), $users_url );
+		$response = wp_remote_get( $users_url );
+		if ( DiscourseUtilities::validate( $response ) ) {
+			$user_data = json_decode( wp_remote_retrieve_body( $response ), true );
+			if ( isset( $user_data[0] ) && isset( $user_data[0]['id'] ) ) {
+				return $user_data[0]['id'];
+			}
+		}
+		// The user doesn't exist yet.
+		return null;
 	}
 
 
