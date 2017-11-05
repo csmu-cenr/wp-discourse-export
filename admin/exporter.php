@@ -168,7 +168,7 @@ class Exporter {
 		}
 
 		$user_data = json_decode( wp_remote_retrieve_body( $response ), true );
-		write_log( 'user data', $user_data );
+		//write_log( 'user data', $user_data );
 
 		// Do something.
 	}
