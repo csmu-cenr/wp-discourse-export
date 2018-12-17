@@ -9,9 +9,17 @@ class DiscourseExport {
 	protected $options;
 
 	protected $wpde_options = array(
-		'wpde_export_users' => 0,
-		'wpde_export_posts' => 0,
-		'wpde_export_comments' => 0,
+		'wpde_export_users' => 1,
+		'wpde_export_users_are_active' => 1 ,
+		'wpde_export_users_are_approved' => 1 ,
+		'wpde_export_users_throttle' => 100 ,
+		'wpde_export_users_whoa' => 5000 ,
+		'wpde_export_posts' => 1,
+		'wpde_export_posts_throttle' => 200 ,
+		'wpde_export_posts_whoa' => 10000 ,
+		'wpde_export_comments' => 1,
+		'wpde_export_comments_throttle' => 300 ,
+		'wpde_export_comments_whoa' => 15000 
 	);
 
 	public function __construct() {
@@ -35,15 +43,15 @@ class DiscourseExport {
 	 *
 	 * @return array
 	 */
-	public function add_options( $wpdc_options ) {
+	public function add_options( $wpde_options ) {
 		static $merged_options = [];
 
 		if ( empty( $merged_options ) ) {
 			$added_options = get_option( $this->option_key );
 			if ( is_array( $added_options ) ) {
-				$merged_options = array_merge( $wpdc_options, $added_options );
+				$merged_options = array_merge( $wpde_options, $added_options );
 			} else {
-				$merged_options = $wpdc_options;
+				$merged_options = $wpde_options;
 			}
 		}
 

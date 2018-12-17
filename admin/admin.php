@@ -62,17 +62,17 @@ class Admin {
 			'export_settings_details',
 		), 'wpde_options' );
 
-		add_settings_field( 'wpde_export_users', __( 'Export Discourse Users', 'wpde' ), array(
+		add_settings_field( 'wpde_export_users', __( 'Export Wordpress Users', 'wpde' ), array(
 			$this,
 			'export_users_checkbox',
 		), 'wpde_options', 'wpde_settings_section' );
 
-		add_settings_field( 'wpde_exported_users_are_active', __( 'Users are active', 'wpde' ), array(
+		add_settings_field( 'wpde_export_users_are_active', __( 'Users are active', 'wpde' ), array(
 			$this,
 			'exported_users_are_active_checkbox',
 		), 'wpde_options', 'wpde_settings_section' );
 
-		add_settings_field( 'wpde_exported_users_are_approved', __( 'Users are approved', 'wpde' ), array(
+		add_settings_field( 'wpde_export_users_are_approved', __( 'Users are approved', 'wpde' ), array(
 			$this,
 			'exported_users_are_approved_checkbox',
 		), 'wpde_options', 'wpde_settings_section' );
@@ -87,7 +87,7 @@ class Admin {
 			'export_users_whoa_editbox',
 		), 'wpde_options', 'wpde_settings_section' );
 		
-		add_settings_field( 'wpds_export_posts', __( 'Export Posts', 'wpde' ), array(
+		add_settings_field( 'wpds_export_posts', __( 'Export Wordpress Posts', 'wpde' ), array(
 			$this,
 			'export_posts_checkbox',
 		), 'wpde_options', 'wpde_settings_section' );
@@ -102,12 +102,12 @@ class Admin {
 			'export_posts_whoa_editbox',
 		), 'wpde_options', 'wpde_settings_section' );
 		
-		add_settings_field( 'wpds_export_comments', __( 'Export Comments', 'wpde' ), array(
+		add_settings_field( 'wpds_export_comments', __( 'Export Wordpress Comments', 'wpde' ), array(
 		        $this,
             'export_comments_checkbox',
         ), 'wpde_options', 'wpde_settings_section' );
 
-		add_settings_field( 'wpde_export_posts_throttle', __( 'Posts Throttle', 'wpde' ), array(
+		add_settings_field( 'wpde_export_comments_throttle', __( 'Comments Throttle', 'wpde' ), array(
 			$this,
 			'export_comments_throttle_editbox',
 		), 'wpde_options', 'wpde_settings_section' );
@@ -145,9 +145,6 @@ class Admin {
 		<a href="?page=wp_discourse_options&tab=wpde_options"
 		   class="nav-tab <?php echo $active ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Export', 'wpde' ); ?>
 		</a>
-		<a href="?page=wp_discourse_options&tab=wpde_options"
-		   class="nav-tab <?php echo $active ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Rate Limits', 'wpde' ); ?>
-		</a>
 		<?php
 	}
 
@@ -161,11 +158,11 @@ class Admin {
 	}
 
 	public function export_users_checkbox() {
-		$this->form_helper->checkbox_input( 'wpde_export_users', 'wpde_options', __( 'Export users.', 'wpde' ) );
+		$this->form_helper->checkbox_input( 'wpde_export_users', 'wpde_options', __( 'Import wordpress users to discourse.', 'wpde' ) );
 	}
 
 	public function exported_users_are_active_checkbox() {
-		$this->form_helper->checkbox_input( 'wpde_exported_users_are_active', 'wpde_options', __( 'Set users active state when exporting.', 'wpde' ) );
+		$this->form_helper->checkbox_input( 'wpde_export_users_are_active', 'wpde_options', __( 'Set users active state when exporting.', 'wpde' ) );
 	}
 
 	public function export_users_throttle_editbox() {
@@ -180,9 +177,21 @@ class Admin {
 		$this->form_helper->input( 'wpde_export_posts_throttle', 'wpde_options', __( 'The number of milliseconds to wait between calls when exporting posts.', 'wpde' ) );
 	}
 	
+	public function export_posts_checkbox() {
+		$this->form_helper->checkbox_input( 'wpde_export_posts', 'wpde_options', __( 'Import wordpress posts to discourse.', 'wpde' ) );
+	}
+
 	public function export_posts_whoa_editbox() {
 		$this->form_helper->input( 'wpde_export_posts_whoa', 'wpde_options', __( 'The number of milliseconds to wait on a 429 response.', 'wpde' ) );
 	}
+	
+	public function exported_users_are_approved_checkbox() {
+		$this->form_helper->checkbox_input( 'wpde_export_users_are_approved', 'wpde_options', __( 'Set users approved state when importing.', 'wpde' ) );
+	}
+	
+	public function export_comments_checkbox() {
+	    $this->form_helper->checkbox_input( 'wpde_export_comments', 'wpde_options', __( 'Import wordpress comments to discourse.', 'wpde' ) );
+    }
 	
 	public function export_comments_throttle_editbox() {
 		$this->form_helper->input( 'wpde_export_comments_throttle', 'wpde_options', __( 'The number of milliseconds to wait between calls when exporting comments.', 'wpde' ) );
@@ -192,15 +201,4 @@ class Admin {
 		$this->form_helper->input( 'wpde_export_comments_whoa', 'wpde_options', __( 'The number of milliseconds to wait on a 429 response.', 'wpde' ) );
 	}
 	
-	public function exported_users_are_approved_checkbox() {
-		$this->form_helper->checkbox_input( 'wpde_exported_users_are_approved', 'wpde_options', __( 'Set users approved state when importing.', 'wpde' ) );
-	}
-	
-	public function export_posts_checkbox() {
-		$this->form_helper->checkbox_input( 'wpde_export_posts', 'wpde_options', __( 'Export posts.', 'wpde' ) );
-	}
-
-	public function export_comments_checkbox() {
-	    $this->form_helper->checkbox_input( 'wpde_export_comments', 'wpde_options', __( 'Export comments', 'wpde' ) );
-    }
 }
