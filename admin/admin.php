@@ -91,7 +91,7 @@ class Admin {
 			$this,
 			'export_posts_checkbox',
 		), 'wpde_options', 'wpde_settings_section' );
-
+		
 		add_settings_field( 'wpde_export_posts_throttle', __( 'Posts Throttle', 'wpde' ), array(
 			$this,
 			'export_posts_throttle_editbox',
@@ -107,6 +107,7 @@ class Admin {
             'export_comments_checkbox',
         ), 'wpde_options', 'wpde_settings_section' );
 
+		
 		add_settings_field( 'wpde_export_comments_throttle', __( 'Comments Throttle', 'wpde' ), array(
 			$this,
 			'export_comments_throttle_editbox',

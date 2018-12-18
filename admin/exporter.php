@@ -20,7 +20,7 @@ class Exporter {
 	}
 
 	public function export_users() {
-		if ( ! empty( $this->options['wpde_export_users'] ) ) {
+		if ( ! empty( $this->options['wpde_export_users'] && false ) ) {
 			$users = get_users();
 
 			foreach( $users as $user ) {
@@ -36,7 +36,7 @@ class Exporter {
 	}
 
 	public function export_posts() {
-		if ( ! empty( $this->options['wpde_export_posts'] ) ) {
+		if ( ! empty( $this->options['wpde_export_posts'] && false ) ) {
 			$args = array(
 				'numberposts' => -1,
 			);
@@ -56,7 +56,7 @@ class Exporter {
 	}
 
 	public function export_comments() {
-		if ( ! empty( $this->options['wpde_export_comments'] ) ) {
+		if ( !empty( $this->options['wpde_export_comments'] && false ) ) {
 			$api_key = $this->options['api-key'];
 			$base_url = $this->options['url'];
 			$api_username = $this->options['publish-username'];

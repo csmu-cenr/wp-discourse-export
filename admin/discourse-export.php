@@ -9,15 +9,15 @@ class DiscourseExport {
 	protected $options;
 
 	protected $wpde_options = array(
-		'wpde_export_users' => 1,
+		'wpde_export_users' => 0,
 		'wpde_export_users_are_active' => 1 ,
 		'wpde_export_users_are_approved' => 1 ,
 		'wpde_export_users_throttle' => 100 ,
 		'wpde_export_users_whoa' => 5000 ,
-		'wpde_export_posts' => 1,
+		'wpde_export_posts' => 0,
 		'wpde_export_posts_throttle' => 200 ,
 		'wpde_export_posts_whoa' => 10000 ,
-		'wpde_export_comments' => 1,
+		'wpde_export_comments' => 0,
 		'wpde_export_comments_throttle' => 300 ,
 		'wpde_export_comments_whoa' => 15000 
 	);
