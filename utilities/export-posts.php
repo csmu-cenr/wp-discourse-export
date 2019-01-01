@@ -20,7 +20,9 @@
 		}
 		
 		$user_header = 'user_email' ;
+		$categories = array() ;
 		foreach($posts as $post){
+			
 			if ( $index == 0 ) {
 				$headers = array() ;
 				foreach ($post as $key => $value) {
@@ -33,7 +35,6 @@
 				}
 			}
 
-			
 			$fields = array() ;
 			echo ( $index . "\n" ) ;
 			foreach ($post as $key => $value) {
@@ -45,8 +46,9 @@
 				}
 			}
 			$user = $users_hash[$post->post_author];
-			if ( $txt ) {
-				
+			$categories = get_the_category($post->ID) ;
+			print_r( $categories ) ;
+			if ( $txt ) {	
 				fwrite($file_hahdler,implode("\t",$fields)."\t". $user->id . "\n") ;				
 			}
 			if  ( $yml ) {
@@ -68,6 +70,7 @@
 				fwrite($file_hahdler,$data) ;	
 			}
 			//echo("$index\t" . implode("\t",$fields) . "\n");
+			break ;
 			$index++ ;
 		}
 		fclose($file_hahdler) ;
