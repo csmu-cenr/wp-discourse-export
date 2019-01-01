@@ -1,5 +1,7 @@
 <?php
 
+	global $wpdb;
+
 	namespace WPDiscourse\Export;
 
 	use WPDiscourse\Utilities\Utilities as DiscourseUtilities;
@@ -69,6 +71,10 @@
 			return $results ;
 		}
 		
+		function create_disourse_users_table() {
+			$charset_collate = $wpdb->get_charset_collate() ;
+		}
+		
 	}
 	
 	$commandLineExporter = new CommandLineExporter() ;
@@ -77,9 +83,7 @@
 	$api_key = $commandLineExporter->get_api_key() ;
 	echo(json_encode(array('url' => $url, 'api_key' => $api_key),JSON_PRETTY_PRINT)."\n") ;
 	$commandLineExporter->set_rate_limits( $commandLineExporter->get_rate_limits_from_server() ) ;
-	echo("\n") ;
-	echo("\n") ;
-	echo('$commandLineExporter->get_rate_limits()' . "\n") ;
-	print_r($commandLineExporter->get_rate_limits()) ;
+
+	
 	
 ?>
