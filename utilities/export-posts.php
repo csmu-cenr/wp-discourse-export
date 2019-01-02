@@ -39,6 +39,20 @@
 		
 		$user_header = 'user_email' ;
 		$post_categories = array() ;
+		
+		// https://stackoverflow.com/questions/1176904/php-how-to-remove-all-non-printable-characters-in-a-string
+		// had an issue with ^{}
+		$badchar=array(
+		    // control characters
+		    chr(0), chr(1), chr(2), chr(3), chr(4), chr(5), chr(6), chr(7), chr(8), //chr(9), chr(10), // keep tab and new line
+		    chr(11), chr(12), //chr(13), // keep carriage return
+			chr(14), chr(15), chr(16), chr(17), chr(18), chr(19), chr(20),
+		    chr(21), chr(22), chr(23), chr(24), chr(25), chr(26), chr(27), chr(28), chr(29), chr(30),
+		    chr(31),
+		    // non-printing characters
+		    chr(127)
+				) ;
+		
 		foreach($posts as $post){
 			
 			if ( $index == 0 ) {
@@ -57,7 +71,7 @@
 			
 			foreach ($post as $key => $value) {
 				if ( $txt ) {
-					$fields[] = str_replace("\r\n", '\n', $post->$key ) ;					
+					$fields[] = str_replace("\n", '\n', $post->$key ) ;					
 				}
 				if ( $yml ) {
 					$fields[] = $post->$key ;		
@@ -95,15 +109,24 @@
 				foreach($headers as $header ) {
 					if($data==''){
 						// start of new record
-						$data .= '- ' . $header . ': ' ;
+						$data .= '- ' . 'index' . ': ' . $index . "\n" ;
+						$data .= '  ' .  $header . ': ' ;
 					} else {
 						$data .= '  ' . $header . ': ' ;
 					}
-					if ( strpos($post->$header, "\n")) {
+					if ( strstr($post->$header, "\n") ) {
 						// handle newlines
+						$value = str_replace($badchar,'', $post->$header) ;
 						$data .= "|\n" ;
+						$lines = explode("\n",$value) ;
+						$data .= "    " . implode("\n    ",$lines) . "\n" ;
+					} else {
+						if( $post->$header ) {
+							$data .= '"' . $post->$header . '"' . "\n" ;
+						} else {
+							$data .= $post->$header . "\n" ;	
+						}
 					}
-					$data .= $post->$header . "\n" ;
 				}
 				$data .= '  user_email: ' . $user->user_email . "\n" ;
 				$data .= '  category_slug: ' . $main_category->slug . "\n" ;
@@ -114,6 +137,9 @@
 			}
 			//echo("$index\t" . implode("\t",$fields) . "\n");
 			//print_r($post_tags) ;
+			if( $index == 50 ) {
+				// break ;
+			}
 			$index++ ;
 		}
 		fclose($file_hahdler) ;
