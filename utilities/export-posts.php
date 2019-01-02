@@ -90,6 +90,7 @@
 				$main_category = array('slug' => '') ;
 				$parent_category = array('slug' => '') ;
 			}
+			// the following line is not working for some reason
 			$permalink = str_replace($wordpress_host_from, $wordpress_host_to, get_permalink($post->ID)) ;
 			echo ( $index . " $permalink\n" ) ;
 			
@@ -102,7 +103,7 @@
 			}
 			// print_r( $post_categories ) ;
 			if ( $txt ) {	
-				fwrite($file_hahdler,implode("\t",$fields)."\t". $user->id . "\t" . $main_category->slug . "\t" . $parent_category->slug . "\t" . implode(",",$tags) . "\t" . $permalink . "\n") ;				
+				fwrite($file_hahdler,implode("\t",$fields)."\t". $user->user_email . "\t" . $main_category->slug . "\t" . $parent_category->slug . "\t" . implode(",",$tags) . "\t" . $permalink . "\n") ;				
 			}
 			if  ( $yml ) {
 				$data = '' ;
