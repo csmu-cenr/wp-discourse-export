@@ -71,10 +71,10 @@
 			
 			foreach ($post as $key => $value) {
 				if ( $txt ) {
-					$fields[] = str_replace("\n", '\n', $post->$key ) ;					
+					$fields[] = str_replace("\t",'\t',str_replace("\n", '\n', $post->$key )) ;					
 				}
 				if ( $yml ) {
-					$fields[] = $post->$key ;		
+					$fields[] = str_replace("\t",'\t',$post->$key) ;		
 				}
 			}
 			$user = $users_hash[$post->post_author];
