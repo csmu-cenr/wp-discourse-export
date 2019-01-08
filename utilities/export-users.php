@@ -5,13 +5,16 @@
 		$users = get_users() ;
 		$index = 0 ;
 		$file_hahdler = fopen($output_path, "w") or die("Unable to open $output_path!") ;
-		$headers = array('id','user_login','user_email','display_name') ;
+		$headers = array('id','user_login','user_email','display_name','roles','user_registered', 'password', 'user_status') ;
 		fwrite($file_hahdler,implode("\t",$headers)."\n") ;
 		foreach($users as $user){
-			$fields = array( $user->id, $user->user_login, $user->user_email, $user->display_name ) ;
+			//print_r($user) ;
+			//print_r($user->roles) ;
+			$fields = array( $user->id, $user->user_login, $user->user_email, $user->display_name, implode(',',$user->roles), $user->user_registered, $user->password, $user->user_status ) ;
 			fwrite($file_hahdler,implode("\t",$fields)."\n") ;
 			echo("$index\t" . implode("\t",$fields) . "\n");
 			$index++ ;
+			//break ;
 		}
 		fclose($file_hahdler) ;
 	} else {
