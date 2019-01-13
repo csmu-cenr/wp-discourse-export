@@ -11,7 +11,7 @@
 		foreach($categories as $category){
 			$categories_hash['term_id'] = $category ;
 		}
-		
+		echo( 'categories.count: ' . count($categories) . "\n" ) ;
 		foreach($categories as $category){
 			if ( $headers == null ) {
 				$headers = array() ;
@@ -19,18 +19,18 @@
 					$headers[] = $key ;
 				}
 				fwrite($file_handler,implode("\t",$headers)."\n") ;
-			} else {
-				$fields = array() ;
-				foreach($category as $key => $value ){
-					if (strpos($category->$key,"\n") > 0 ) {
-						$fields[] = str_replace("\n", '\n', $category->$key) ;
-					} else {
-						$fields[] = $category->$key ;						
-					}
+			}  
+			
+			$fields = array() ;
+			foreach($category as $key => $value ){
+				if (strpos($category->$key,"\n") > 0 ) {
+					$fields[] = str_replace("\n", '\n', $category->$key) ;
+				} else {
+					$fields[] = $category->$key ;						
 				}
-				fwrite($file_handler,implode("\t",$fields) . "\n") ;
-				echo("$index\t" . implode("\t",$fields) . "\n");
 			}
+			fwrite($file_handler,implode("\t",$fields) . "\n") ;
+			
 			$index++ ;
 		}
 		fclose($file_handler) ;
