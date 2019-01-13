@@ -14,15 +14,12 @@
 			$wordress_host_to = '' ;
 		}
 		
-		$file_parts = pathinfo($output_path);
-		$yml = $file_parts['extension'] == 'yml' ;
-		$txt = $file_parts['extension'] == 'txt' ;
 		$args = array(
 			'numberposts' => -1,
 		);
 		$posts = get_posts( $args );
 		$index = 0 ;
-		$file_hahdler = fopen($output_path, "w") or die("Unable to open $output_path!") ;
+		$file_handler = fopen($output_path, "w") or die("Unable to open $output_path!") ;
 		$index = 0 ;
 		
 		$users = get_users() ;
@@ -58,24 +55,15 @@
 			if ( $index == 0 ) {
 				$headers = array() ;
 				foreach ($post as $key => $value) {
-				 	echo $key . "\t" ;
 					$headers[] = $key ;
 				}
-			 	echo $key . "\n" ;
-				if ( $txt ) {
-					fwrite($file_hahdler,implode("\t",$headers). "\t$user_header\tcategory_slug\tparent_category_slug\ttags\tpermalink\n") ;			
-				}
+				fwrite($file_handler,implode("\t",$headers). "\t$user_header\tcategory_slug\tparent_category_slug\ttags\tpermalink\n") ;			
 			}
 
 			$fields = array() ;
 			
 			foreach ($post as $key => $value) {
-				if ( $txt ) {
-					$fields[] = str_replace("\t",'\t',str_replace("\n", '\n', $post->$key )) ;					
-				}
-				if ( $yml ) {
-					$fields[] = str_replace("\t",'\t',$post->$key) ;		
-				}
+				$fields[] = str_replace("\t",'\t',str_replace("\n", '\n', $post->$key )) ;					
 			}
 			$user = $users_hash[$post->post_author];
 			$post_categories = get_the_category($post->ID) ;
@@ -101,49 +89,10 @@
 					$tags[] = $post_tags->slug ;
 				}				
 			}
-			// print_r( $post_categories ) ;
-			if ( $txt ) {	
-				fwrite($file_hahdler,implode("\t",$fields)."\t". $user->user_email . "\t" . $main_category->slug . "\t" . $parent_category->slug . "\t" . implode(",",$tags) . "\t" . $permalink . "\n") ;				
-			}
-			if  ( $yml ) {
-				$data = '' ;
-				foreach($headers as $header ) {
-					if($data==''){
-						// start of new record
-						$data .= '- ' . 'index' . ': ' . $index . "\n" ;
-						$data .= '  ' .  $header . ': ' ;
-					} else {
-						$data .= '  ' . $header . ': ' ;
-					}
-					if ( strstr($post->$header, "\n") ) {
-						// handle newlines
-						$value = str_replace($badchar,'', $post->$header) ;
-						$data .= "|\n" ;
-						$lines = explode("\n",$value) ;
-						$data .= "    " . implode("\n    ",$lines) . "\n" ;
-					} else {
-						if( $post->$header ) {
-							$data .= '"' . $post->$header . '"' . "\n" ;
-						} else {
-							$data .= $post->$header . "\n" ;	
-						}
-					}
-				}
-				$data .= '  user_email: ' . $user->user_email . "\n" ;
-				$data .= '  category_slug: ' . $main_category->slug . "\n" ;
-				$data .= '  parent_category_slug: ' . $parent_category->slug . "\n" ;
-				$data .= '  tags: ' . implode(",",$tags) . "\n" ;
-				$data .= '  permalink: ' . $permalink . "\n" ;
-				fwrite($file_hahdler,$data) ;	
-			}
-			//echo("$index\t" . implode("\t",$fields) . "\n");
-			//print_r($post_tags) ;
-			if( $index == 50 ) {
-				// break ;
-			}
+			fwrite($file_handler,implode("\t",$fields)."\t". $user->user_email . "\t" . $main_category->slug . "\t" . $parent_category->slug . "\t" . implode(",",$tags) . "\t" . $permalink . "\n") ;				
 			$index++ ;
 		}
-		fclose($file_hahdler) ;
+		fclose($file_handler) ;
 		echo( $wordress_host_from . "\n" ) ;
 		echo( $wordress_host_to . "\n" ) ;
 	} else {
