@@ -3,4 +3,3 @@
 # ignore possible tab delimited or comma separated outputs.
 *.txt
 *.csv
-*.yml
