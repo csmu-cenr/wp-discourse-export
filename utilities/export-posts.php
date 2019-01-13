@@ -10,11 +10,13 @@
 		$file_handler = fopen($output_path, "w") or die("Unable to open $output_path!") ;
 
 		$index = 0 ;
+		$comment_ids = array() ;
+		$comment_parent_ids = array() ;
+		
 		foreach($posts as $post){
 			
 			$comment_args = array( 'post_id' => $post->ID, 'order' => 'ASC' );
 			$comments = get_comments( $comment_args );
-			$comment_post_ids = [];
 			foreach ( $comments as $comment ) {
 				$raw = $comment->comment_content;
 				$author_email = $comment->comment_author_email;
@@ -47,13 +49,14 @@
 						$headers[] = $key ;
 					}
 					fwrite($file_handler,implode("\t",$headers) . "\n" ) ;			
-				} else {
-					$fields = array() ;
-					foreach ($output as $key => $value) {
-						$fields[] = $value ;
-					}
-					fwrite($file_handler,implode("\t",$fields) . "\n" ) ;
+				}  
+				
+				$fields = array() ;
+				foreach ($output as $key => $value) {
+					$fields[] = $value ;
 				}
+				fwrite($file_handler,implode("\t",$fields) . "\n" ) ;
+			
 				$index++ ;
 				echo( $index . "\n" ) ;
 			}	
